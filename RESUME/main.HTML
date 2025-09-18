@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vedika Kadam | Interactive Resume</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calm Neutrals -->
+    <!-- Application Structure Plan: The SPA uses a fixed sidebar navigation for seamless, non-linear exploration. This allows different types of visitors (e.g., technical recruiters, HR managers) to jump directly to the sections most relevant to them (like 'Projects' or 'About'). The main content area dynamically displays the selected section, providing a focused and clutter-free user experience. This structure prioritizes usability and quick access to key information over a traditional top-to-bottom scroll. -->
+    <!-- Visualization & Content Choices: 
+        - About: Report Info -> Objective/Education -> Goal: Inform -> Presentation: Formatted Text -> Interaction: Static -> Justification: Provides a clear, concise introduction.
+        - Skills: Report Info -> Technical/Soft Skills -> Goal: Compare/Inform -> Viz: Horizontal Bar Chart -> Interaction: Hover for details -> Justification: Visually quantifies skills for quick assessment, more engaging than a list. -> Library: Chart.js (Canvas).
+        - Projects: Report Info -> Project details -> Goal: Organize/Inform -> Presentation: Grid of Cards with a Modal for details -> Interaction: Click to expand -> Justification: Keeps the main view scannable while offering deep-dive information on demand. -> Library/Method: HTML/CSS/JS.
+        - Achievements: Report Info -> Certificates/Activities -> Goal: Inform -> Presentation: Vertical Timeline -> Interaction: Static -> Justification: Presents chronological/thematic achievements in a visually appealing narrative format. -> Library/Method: HTML/CSS/JS.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f7f4;
+            color: #4a4a4a;
+        }
+        .nav-link {
+            transition: all 0.3s ease;
+        }
+        .nav-link.active, .nav-link:hover {
+            background-color: #eaddd7;
+            color: #83675a;
+            transform: translateX(4px);
+        }
+        .content-section {
+            display: none;
+        }
+        .content-section.active {
+            display: block;
+        }
+        .project-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .project-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 400px;
+            max-height: 50vh;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 500px;
+            }
+        }
+        .modal-backdrop {
+            background-color: rgba(0,0,0,0.5);
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <div class="flex flex-col md:flex-row min-h-screen">
+        <aside class="w-full md:w-64 bg-[#efebe9] p-6 md:fixed md:h-full">
+            <div class="text-center md:text-left">
+                <h1 class="text-2xl font-bold text-[#6d4c41]">Vedika Kadam</h1>
+                <p class="text-sm text-[#8d6e63] mt-1">Aspiring Developer & Creator</p>
+            </div>
+            <nav class="mt-8">
+                <ul class="space-y-2">
+                    <li><a href="#about" data-section="about" class="nav-link active flex items-center p-3 rounded-lg"><span>🏠</span><span class="ml-3">About Me</span></a></li>
+                    <li><a href="#skills" data-section="skills" class="nav-link flex items-center p-3 rounded-lg"><span>💡</span><span class="ml-3">Skills</span></a></li>
+                    <li><a href="#projects" data-section="projects" class="nav-link flex items-center p-3 rounded-lg"><span>📁</span><span class="ml-3">Projects</span></a></li>
+                    <li><a href="#achievements" data-section="achievements" class="nav-link flex items-center p-3 rounded-lg"><span>🏆</span><span class="ml-3">Achievements</span></a></li>
+                    <li><a href="#contact" data-section="contact" class="nav-link flex items-center p-3 rounded-lg"><span>✉️</span><span class="ml-3">Contact</span></a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="flex-1 md:ml-64 p-6 sm:p-8 md:p-12">
+            <section id="about" class="content-section active">
+                <h2 class="text-3xl font-bold text-[#6d4c41] mb-6">About Me</h2>
+                <div class="bg-white p-8 rounded-xl shadow-sm">
+                    <p class="text-lg leading-relaxed text-gray-700 mb-6">
+                        A highly motivated and adaptable third-year BCA student with a strong academic background and a passion for continuous learning. I am seeking a challenging role where I can apply my versatile technical and soft skills, contribute to team success, and grow professionally across various domains including IT, content creation, and human resources.
+                    </p>
+                    <div class="border-t border-gray-200 pt-6">
+                        <h3 class="text-xl font-semibold text-[#6d4c41] mb-4">Education</h3>
+                        <div class="flex items-center">
+                            <span class="text-4xl">🎓</span>
+                            <div class="ml-4">
+                                <p class="font-bold text-gray-800">Bachelor of Computer Applications (BCA)</p>
+                                <p class="text-gray-600">S.S.M.M., Pune</p>
+                                <p class="text-sm text-gray-500 mt-1">Current CGPA: 8.0+</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="skills" class="content-section">
+                <h2 class="text-3xl font-bold text-[#6d4c41] mb-6">Technical Skills</h2>
+                 <div class="bg-white p-6 rounded-xl shadow-sm">
+                    <p class="text-center text-gray-600 mb-4">This chart provides an overview of my technical abilities. Hover over the bars for more details on my proficiency in each area.</p>
+                    <div class="chart-container">
+                        <canvas id="skillsChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <section id="projects" class="content-section">
+                <h2 class="text-3xl font-bold text-[#6d4c41] mb-6">Projects</h2>
+                <p class="text-gray-600 mb-8">Here are some of the key projects I've worked on during my studies. They showcase my ability to build full-stack applications from concept to deployment. Click "View Details" to learn more about each project.</p>
+                <div id="project-grid" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                </div>
+            </section>
+
+            <section id="achievements" class="content-section">
+                <h2 class="text-3xl font-bold text-[#6d4c41] mb-6">Achievements & Activities</h2>
+                <div class="bg-white p-8 rounded-xl shadow-sm">
+                    <div class="relative border-l-2 border-[#eaddd7] ml-4 pl-8 space-y-12">
+                         <div class="absolute w-4 h-4 bg-[#83675a] rounded-full -left-2 top-1 ring-4 ring-white"></div>
+                        <div>
+                            <h3 class="font-semibold text-lg text-gray-800">MS-CIT Certification</h3>
+                            <p class="text-gray-600">Completed the Maharashtra State Certificate in Information Technology, gaining foundational IT literacy skills.</p>
+                        </div>
+                         <div class="absolute w-4 h-4 bg-[#83675a] rounded-full -left-2 ring-4 ring-white"></div>
+                        <div>
+                            <h3 class="font-semibold text-lg text-gray-800">National Service Scheme (NSS)</h3>
+                            <p class="text-gray-600">Active participant in NSS activities since the first year of college, contributing to community service and social welfare initiatives.</p>
+                        </div>
+                         <div class="absolute w-4 h-4 bg-[#83675a] rounded-full -left-2 ring-4 ring-white"></div>
+                        <div>
+                            <h3 class="font-semibold text-lg text-gray-800">"Earn and Learn" Scheme</h3>
+                            <p class="text-gray-600">Showcased dedication and a proactive attitude by actively participating in the university's work-study scheme.</p>
+                        </div>
+                         <div class="absolute w-4 h-4 bg-[#83675a] rounded-full -left-2 ring-4 ring-white"></div>
+                        <div>
+                            <h3 class="font-semibold text-lg text-gray-800">College Competitions</h3>
+                            <p class="text-gray-600">Engaged in various creative and technical competitions, including poster making, review writing, and article writing, honing my content creation and presentation skills.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="contact" class="content-section">
+                <h2 class="text-3xl font-bold text-[#6d4c41] mb-6">Get In Touch</h2>
+                <div class="bg-white p-8 rounded-xl shadow-sm">
+                    <p class="text-lg text-gray-700 mb-6">I'm always open to discussing new opportunities and challenges. Feel free to reach out to me via email or phone.</p>
+                    <div class="space-y-4">
+                        <div class="flex items-center">
+                            <span class="text-2xl">📧</span>
+                            <a href="mailto:vedikagkadam@gmail.com" class="ml-4 text-gray-800 hover:text-[#83675a]">vedikagkadam@gmail.com</a>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="text-2xl">📞</span>
+                            <span class="ml-4 text-gray-800">+91 9762419573</span>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="text-2xl">📍</span>
+                            <span class="ml-4 text-gray-800">Swami Vivekananda Society, Kothrud Warje, Pune</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="project-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 modal-backdrop">
+        <div class="bg-white rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto" id="modal-content">
+            <div class="p-6">
+                <div class="flex justify-between items-start">
+                    <h3 id="modal-title" class="text-2xl font-bold text-[#6d4c41]"></h3>
+                    <button id="modal-close" class="text-2xl text-gray-500 hover:text-gray-800">&times;</button>
+                </div>
+                <div id="modal-tags" class="flex flex-wrap gap-2 my-4"></div>
+                <div class="prose max-w-none">
+                    <p id="modal-description" class="text-gray-700"></p>
+                    <h4 class="font-semibold text-gray-800 mt-4">Outcome:</h4>
+                    <p id="modal-outcome" class="text-gray-700"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const skillsData = {
+            labels: ['C/C++', 'Java', 'Python', 'HTML', 'CSS', 'JavaScript', 'PHP', 'MySQL', 'Bootstrap', 'MS Office'],
+            datasets: [{
+                label: 'Proficiency',
+                data: [80, 75, 70, 90, 85, 80, 80, 75, 88, 95],
+                backgroundColor: '#eaddd7',
+                borderColor: '#83675a',
+                borderWidth: 1,
+                borderRadius: 4,
+            }]
+        };
+
+        const projectsData = [
+            {
+                id: 'bloodsearch',
+                title: 'Bloodsearch – Blood Search Engine Website',
+                tags: ['PHP', 'MySQL', 'Bootstrap'],
+                description: 'A user-centric web application designed to connect emergency patients with potential blood donors. The project features a search function by blood group and location, direct donor contact without the need for a login, and an admin dashboard for managing donor data and blood donation camp updates. The project uses an offline integration model where donor data is collected from camps and added manually.',
+                outcome: 'This project demonstrates practical application of full-stack development skills and a commitment to creating a useful, real-world solution for a critical social need in Pune.'
+            },
+            {
+                id: 'maharashtra-yatra',
+                title: 'Maharashtra Yatra – Family Bus Booking System',
+                tags: ['PHP', 'MySQL', 'Bootstrap', 'Full Stack'],
+                description: 'A comprehensive, full-stack web application for long-distance bus travel across Maharashtra. Key features include real-time bus availability and fare updates, an instant booking confirmation system, and a dedicated admin panel for managing buses, users, and routes. The system is fully responsive, ensuring a seamless user experience across mobile, tablet, and desktop devices.',
+                outcome: 'This project was a live implementation that honed skills in database integration, backend logic building, and frontend responsiveness.'
+            },
+            {
+                id: 'ecommerce',
+                title: 'E-Commerce App with Payment Gateway',
+                tags: ['In Progress', 'Payment Gateway'],
+                description: 'This ongoing project focuses on the crucial aspect of secure online transactions. I am responsible for implementing the payment processing logic, ensuring a smooth and secure checkout experience for users.',
+                outcome: 'This project is significantly enhancing my understanding of secure data handling, API integration, and financial system logic within a web application.'
+            }
+        ];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const navLinks = document.querySelectorAll('.nav-link');
+            const contentSections = document.querySelectorAll('.content-section');
+
+            const setActiveSection = (sectionId) => {
+                navLinks.forEach(link => {
+                    link.classList.toggle('active', link.dataset.section === sectionId);
+                });
+                contentSections.forEach(section => {
+                    section.classList.toggle('active', section.id === sectionId);
+                });
+            };
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const sectionId = link.dataset.section;
+                    setActiveSection(sectionId);
+                    window.location.hash = sectionId;
+                });
+            });
+
+            const initialSection = window.location.hash.substring(1) || 'about';
+            setActiveSection(initialSection);
+
+            const ctx = document.getElementById('skillsChart').getContext('2d');
+            if (ctx) {
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: skillsData,
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        let value = context.raw;
+                                        let proficiency = '';
+                                        if (value >= 90) proficiency = 'Excellent';
+                                        else if (value >= 80) proficiency = 'Proficient';
+                                        else if (value >= 70) proficiency = 'Intermediate';
+                                        else proficiency = 'Familiar';
+                                        return `${proficiency}`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                beginAtZero: true,
+                                max: 100,
+                                grid: {
+                                    display: false
+                                }
+                            },
+                            y: {
+                                grid: {
+                                    display: false
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            const projectGrid = document.getElementById('project-grid');
+            const modal = document.getElementById('project-modal');
+            const modalClose = document.getElementById('modal-close');
+            const modalContent = document.getElementById('modal-content');
+
+            projectsData.forEach(project => {
+                const card = document.createElement('div');
+                card.className = 'project-card bg-white p-6 rounded-xl shadow-sm cursor-pointer';
+                card.innerHTML = `
+                    <h3 class="font-bold text-xl text-gray-800">${project.title}</h3>
+                    <div class="flex flex-wrap gap-2 my-3">
+                        ${project.tags.map(tag => `<span class="text-xs font-medium bg-[#eaddd7] text-[#83675a] px-2 py-1 rounded-full">${tag}</span>`).join('')}
+                    </div>
+                    <p class="text-gray-600 text-sm mb-4">${project.description.substring(0, 100)}...</p>
+                    <button data-project-id="${project.id}" class="view-details-btn text-sm font-semibold text-[#6d4c41] hover:underline">View Details →</button>
+                `;
+                projectGrid.appendChild(card);
+            });
+
+            const openModal = (projectId) => {
+                const project = projectsData.find(p => p.id === projectId);
+                if (project) {
+                    document.getElementById('modal-title').textContent = project.title;
+                    document.getElementById('modal-description').textContent = project.description;
+                    document.getElementById('modal-outcome').textContent = project.outcome;
+                    const tagsContainer = document.getElementById('modal-tags');
+                    tagsContainer.innerHTML = project.tags.map(tag => `<span class="text-xs font-medium bg-[#eaddd7] text-[#83675a] px-2 py-1 rounded-full">${tag}</span>`).join('');
+                    modal.classList.remove('hidden');
+                    modal.classList.add('flex');
+                }
+            };
+            
+            projectGrid.addEventListener('click', (e) => {
+                if (e.target.classList.contains('view-details-btn')) {
+                    openModal(e.target.dataset.projectId);
+                } else if (e.target.closest('.project-card')) {
+                    const card = e.target.closest('.project-card');
+                    const button = card.querySelector('.view-details-btn');
+                    if (button) {
+                        openModal(button.dataset.projectId);
+                    }
+                }
+            });
+
+            modalClose.addEventListener('click', () => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            });
+            
+            modal.addEventListener('click', (e) => {
+                if(e.target === modal) {
+                    modal.classList.add('hidden');
+                    modal.classList.remove('flex');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
